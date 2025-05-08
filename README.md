@@ -99,3 +99,30 @@ vhotplug.service --> qmu.qmpclient : [8] Device addition
 
 - Use OPAL for dynamic policy updates.
 - Add **policy versioning and rollback** mechanisms.
+
+## 9. Extra:
+### More generic usbhotplug rules:
+```json
+{
+		"allowed_rules": {
+		  "0x03": [{"subclass": ["0x01"], "vms": ["vm_03_01", "vm_03_02"]}, {"subclass": ["0x02"], "vms": ["vm_03_04", "vm_03_05"]}, {"subclass": ["0x02"], "protocol": ["0x01"], "vms": ["vm_03_06", "vm_03_07"]}],
+		  "0x08": [{"subclass": ["0x02", "0x06"], "vms": ["vm_08"]}],
+		  "0x0a": [{"subclass_range": ["0x00", "0x05"], "vms": ["vm_0a"]}],
+		  "0x0e": [{"subclass": ["0x01", "0x02"], "vms": ["vm_0e"]}],
+		  "0xff": [{"0xddad": ["0xbeaf"], "vms" : ["vm_03_01", "vm-0ff_02"]}, {"0xdeed": ["0xbeef"], "vms":["vm-0ff_03", "vm-0ff_04"]}]
+		},
+		"blacklist_global_map": {
+		  "0x1d6b": ["0xbeed"],
+		  "~0x1d0c": ["0xbeed"]
+		},
+		"blacklist_per_vm_map": {
+		  "vm_03_01": {
+			"0xdead": ["0xbeef"],
+			"0xbed": ["0xbeef"]
+		  },
+		  "vm_03_04": {
+			"0xdead": ["0xbeef"]
+		  }
+		}
+}
+```
