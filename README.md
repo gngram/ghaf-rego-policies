@@ -104,25 +104,60 @@ vhotplug.service --> qmu.qmpclient : [8] Device addition
 ### More generic usbhotplug rules:
 ```json
 {
-		"allowed_rules": {
-		  "0x03": [{"subclass": ["0x01"], "vms": ["vm_03_01", "vm_03_02"]}, {"subclass": ["0x02"], "vms": ["vm_03_04", "vm_03_05"]}, {"subclass": ["0x02"], "protocol": ["0x01"], "vms": ["vm_03_06", "vm_03_07"]}],
-		  "0x08": [{"subclass": ["0x02", "0x06"], "vms": ["vm_08"]}],
-		  "0x0a": [{"subclass_range": ["0x00", "0x05"], "vms": ["vm_0a"]}],
-		  "0x0e": [{"subclass": ["0x01", "0x02"], "vms": ["vm_0e"]}],
-		  "0xff": [{"0xddad": ["0xbeaf"], "vms" : ["vm_03_01", "vm-0ff_02"]}, {"0xdeed": ["0xbeef"], "vms":["vm-0ff_03", "vm-0ff_04"]}]
-		},
-		"blacklist_global_map": {
-		  "0x1d6b": ["0xbeed"],
-		  "~0x1d0c": ["0xbeed"]
-		},
-		"blacklist_per_vm_map": {
-		  "vm_03_01": {
-			"0xdead": ["0xbeef"],
-			"0xbed": ["0xbeef"]
-		  },
-		  "vm_03_04": {
-			"0xdead": ["0xbeef"]
-		  }
-		}
+  "rules": {
+    "_blacklist_" : [ 
+      "List of blacklisted devices.",
+      "Format: vendor_id : [list of products].",
+      "       ~vendor_id : [list of products].",
+      "When starts with ~, all the products of the vendor will be blacklisted except the listed ones.",
+      "Vendor and product IDs must be 4 digit hex in 0x00ab format."
+    ],
+    "blacklist": {
+       "0xbadb" : ["0xdada"],
+       "~0xbabb" : ["0xcaca"]
+    },
+
+    "_whitelist_" : [ 
+      "List of devices and VMs which are allowed to access it.",
+      "Format: <vendor_id:product_id> : [list of allowed vms].",
+      "        <vendor_id:*> : [list of allowed vm].",
+      "* indicates all products of the vendor.",
+      "vendor and product IDs must be 4 digit hex in 0x00ab format."
+    ],
+    "whitelist" : {
+      "0x0b95:0x1790" : ["net-vm"]
+    },
+
+
+
+    "_class_rules_" : [ 
+      "Device with specific class, subclass, and protocol and it's mapping to VMs.",
+      "Format: <class:subclass:protocol> : [list of allowed vms].",
+      "* can be used for subclass and protocol.",
+      "* indicates all values of that category is accepted.",
+      "Must be 2 digit hex in 0x0a format."
+    ],
+    "class_rules" : {
+        "0x01:*:*" : ["audio-vm"],
+        "0x03:*:0x01" : ["gui-vm"],
+        "0x03:*:0x02" : ["gui-vm"],
+        "0x08:0x06:*" : ["gui-vm"],
+        "0x0b:*:*" : ["gui-vm"],
+        "0x11:*:*" : ["gui-vm"],
+        "0xe0:0x01:0x01" : ["gui-vm"],
+        "0x02:06:*" : ["net-vm"],
+        "0x0e:*:*" : ["chrome-vm"]
+    },
+
+    "_device_filter_" : [ 
+      "Listed devices will be filtered out from the vm.",
+      "Format: <vm-name> : [list of <vendor_id:product_id>].",
+      "Vendor and product IDs must be 4 digit hex in 0x00ab format."
+    ],
+    "device_filter" : {
+        "chrome-vm": ["0x04f2:0xb751", "0x5986:0x2145", "0x30c9:0x0052", "0x30c9:0x005f"]
+    }
+  }
 }
+
 ```
